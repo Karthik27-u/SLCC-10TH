@@ -74,12 +74,6 @@
     </div>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('Service Worker Registered!'))
-            .catch(err => console.log('Service Worker Error', err));
-        }
-
         let myName = localStorage.getItem("chat_username");
         if (!myName) {
             myName = prompt("ആപ്പിൽ നിങ്ങളുടെ പേര് നൽകുക (karthik അല്ലെങ്കിൽ parvathy എന്ന് കൃത്യമായി ടൈപ്പ് ചെയ്യുക):");
@@ -93,7 +87,6 @@
             myName = myName.toLowerCase();
         }
 
-        // GitHub സിസ്റ്റത്തിന് കണ്ടുപിടിക്കാൻ പറ്റാത്ത രീതിയിൽ കീ സുരക്ഷിതമാക്കി മാറ്റിയിരിക്കുന്നു
         const p1 = "AIzaSyCddDS8v";
         const p2 = "l8lIS_G7t_N0-Y";
         const p3 = "vS-gWwUaYVno";
@@ -117,14 +110,7 @@
         let isRecording = false;
         let appStartTime = Date.now(); 
 
-        function askNotificationPermission() {
-            if (window.Notification && Notification.permission !== "granted") {
-                Notification.requestPermission();
-            }
-        }
-
         function triggerSecret() {
-            askNotificationPermission();
             clickCount++;
             if (clickCount === 5) {
                 clickCount = 0;
@@ -136,7 +122,6 @@
                 let isAuthenticated = false;
                 let chatTitleName = "Secret Chat";
 
-                // പേര് തിരിച്ചറിഞ്ഞ് വർക്ക് ചെയ്യുന്ന ലോജിക്
                 if (myName === "karthik" && enteredCode === "parvathy") {
                     isAuthenticated = true;
                     chatTitleName = "PARVATHY";
@@ -144,7 +129,6 @@
                     isAuthenticated = true;
                     chatTitleName = "KARTHIK";
                 } else if (myName !== "karthik" && myName !== "parvathy") {
-                    // പേര് തെറ്റിച്ചാണ് അടിച്ചതെങ്കിൽ പൊതുവായി ചെക്ക് ചെയ്യാനുള്ള സുരക്ഷ
                     if (enteredCode === "karthik" || enteredCode === "parvathy") {
                         isAuthenticated = true;
                         chatTitleName = "🔒 Secure Chat";
@@ -229,12 +213,6 @@
                 
                 msgBox.appendChild(newMsg);
                 msgBox.scrollTop = msgBox.scrollHeight; 
-
-                if (data.timestamp > appStartTime && data.sender.toLowerCase() !== myName.toLowerCase()) {
-                    if (navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({ action: 'showNotification' });
-                    }
-                }
             });
         }
     </script>
