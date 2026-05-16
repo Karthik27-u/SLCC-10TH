@@ -56,12 +56,12 @@
     </div>
 
     <div id="chat-page">
-        <div class="chat-header" id="chat-title">Secret Chat 🔒</div>
+        <div class="chat-header" id="chat-title">Secure Chat 🔒</div>
         <div class="message-area" id="msg-box"></div>
         <div class="input-area">
             <div class="input-container">
                 <button class="media-btn">😊</button>
-                <input type="text" id="user-msg" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+                <input type="text" id="user-msg" placeholder="Send messages safely..." onkeypress="handleKeyPress(event)">
                 <button class="media-btn" onclick="sendMessage()">📎</button>
                 
                 <button class="media-btn" onclick="document.getElementById('file-input').click()">📷</button>
@@ -82,13 +82,15 @@
 
         let myName = localStorage.getItem("chat_username");
         if (!myName) {
-            myName = prompt("ആപ്പിൽ നിങ്ങളുടെ പേര് നൽകുക (Eg: karthik അല്ലെങ്കിൽ അവളുടെ പേര്):");
+            myName = prompt("ആപ്പിൽ നിങ്ങളുടെ പേര് നൽകുക (karthik അല്ലെങ്കിൽ parvathy എന്ന് കൃത്യമായി ടൈപ്പ് ചെയ്യുക):");
             if (myName) {
-                myName = myName.trim();
+                myName = myName.trim().toLowerCase();
                 localStorage.setItem("chat_username", myName);
             } else {
-                myName = "User";
+                myName = "user";
             }
+        } else {
+            myName = myName.toLowerCase();
         }
 
         // GitHub സിസ്റ്റത്തിന് കണ്ടുപിടിക്കാൻ പറ്റാത്ത രീതിയിൽ കീ സുരക്ഷിതമാക്കി മാറ്റിയിരിക്കുന്നു
@@ -127,24 +129,32 @@
             if (clickCount === 5) {
                 clickCount = 0;
                 
-                let loverNameInput = prompt("Enter Verification Code 🔑");
-                if (!loverNameInput) return;
+                let securityCodeInput = prompt("Enter Security Code 🔑");
+                if (!securityCodeInput) return;
 
-                let currentName = myName.toLowerCase();
-                let enteredName = loverNameInput.trim().toLowerCase();
-                let herRealName = "parvathy"; 
+                let enteredCode = securityCodeInput.trim().toLowerCase();
                 let isAuthenticated = false;
+                let chatTitleName = "Secret Chat";
 
-                if (currentName === "karthik" && enteredName === herRealName) {
+                // പേര് തിരിച്ചറിഞ്ഞ് വർക്ക് ചെയ്യുന്ന ലോജിക്
+                if (myName === "karthik" && enteredCode === "parvathy") {
                     isAuthenticated = true;
-                } else if (currentName === herRealName && enteredName === "karthik") {
+                    chatTitleName = "PARVATHY";
+                } else if (myName === "parvathy" && enteredCode === "karthik") {
                     isAuthenticated = true;
+                    chatTitleName = "KARTHIK";
+                } else if (myName !== "karthik" && myName !== "parvathy") {
+                    // പേര് തെറ്റിച്ചാണ് അടിച്ചതെങ്കിൽ പൊതുവായി ചെക്ക് ചെയ്യാനുള്ള സുരക്ഷ
+                    if (enteredCode === "karthik" || enteredCode === "parvathy") {
+                        isAuthenticated = true;
+                        chatTitleName = "🔒 Secure Chat";
+                    }
                 }
 
                 if (isAuthenticated) {
                     document.getElementById("study-page").style.display = "none";
                     document.getElementById("chat-page").style.display = "flex";
-                    document.getElementById("chat-title").innerText = (currentName === "karthik") ? herRealName.toUpperCase() : "KARTHIK";
+                    document.getElementById("chat-title").innerText = chatTitleName;
                     listenForMessages(); 
                 } else {
                     alert("Wrong Code!");
@@ -210,7 +220,7 @@
                     newMsg.className = "msg sent";
                 } else {
                     newMsg.className = "msg received";
-                    newMsg.innerHTML = `<span class="sender-name">${data.sender}</span>`;
+                    newMsg.innerHTML = `<span class="sender-name">${data.sender.toUpperCase()}</span>`;
                 }
 
                 if (data.type === "image") { newMsg.innerHTML += `<img src="${data.text}">`; } 
